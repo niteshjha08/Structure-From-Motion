@@ -1,5 +1,5 @@
 import numpy as np
-
+# http://www.cs.cmu.edu/~16385/s17/Slides/11.4_Triangulation.pdf
 def getP(K, R, C):
     P = np.dot(np.dot(K,R), C)
     P1, P2, P3 = P[0,:].T, P[1,:].T, P[2,:].T
@@ -9,6 +9,7 @@ def LinearTriangulation(K, C0, R0, C1, R1, mp1, mp2):
     # Given 2D points, this function computes the 3D point using linear triangulation
     I = np.eye(3)
 
+    C0 = C0.reshape(-1,1)
     C0 = np.hstack((I, -1*C0))
     P01, P02, P03 = getP(K, R0, C0)
 

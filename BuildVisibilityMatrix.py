@@ -1,19 +1,18 @@
 import numpy as np
-import cv2
 
-def VisibilityMatrix(mp_1, mp_2, img_pairs):
+def BuildVisibilityMatrix(flag3D, flag2D, nCams):
 
-    VisibilityMtx = np.zeros((6, img_pairs.shape[0]))
-    for j in range(img_pairs.shape[0]):
-        i1, i2 = img_pairs[j]
-        for i in range(6):
-            if i+1==int(i1):
-                
-                VisibilityMtx[i,j]=1
-            elif i+1 == int(i2):
-                VisibilityMtx[i,j]=1
+    mixed2Dflag = np.zeros((flag2D.shape[0],1), dtype = int)
+    rows, columns = np.where(flag2D[:,0:nCams+1] == 1)
+    rows = np.array(list(set(rows)))
+    mixed2Dflag[rows] = 1
 
-    return VisibilityMtx
+    idx_2D3D = np.where((flag3D.reshape(-1)) & (mixed2Dflag.reshape(-1)))
 
-    
-
+    for j in range(nCams + 1):
+        v_i = flag2D[idx_2D3D, j].reshape(-1,1)
+        if j == 0:
+            VisibilityMtx = v_i
+        else:
+            VisibilityMtx = np.hstack((VisibilityMtx, v_i))
+    return idx_2D3D, VisibilityMtx
